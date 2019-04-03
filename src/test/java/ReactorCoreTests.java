@@ -1,4 +1,5 @@
 import org.junit.Test;
+import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
@@ -62,5 +63,22 @@ public class ReactorCoreTests {
                 "First Flux: 4, Second Flux: 1",
                 "First Flux: 6, Second Flux: 2",
                 "First Flux: 8, Second Flux: 3");
+    }
+
+    @Test
+    public void hotStreamsDontPublishUnlessConnected() {
+        ConnectableFlux<Object> publish = Flux.create(fluxSink -> {
+            while (true) {
+                fluxSink.next(System.currentTimeMillis());
+            }
+        }).publish();
+
+        var elements = new ArrayList<>();
+        publish.subscribe(elements::add);
+
+        assertThat(elements).isEmpty();
+
+        // Once connected, it will stream infinitely.
+        // publish.connect();
     }
 }
