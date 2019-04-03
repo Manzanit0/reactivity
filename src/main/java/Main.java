@@ -1,7 +1,13 @@
 import reactor.core.publisher.Flux;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
-        Flux<String> just = Flux.just("1", "2", "3");
+        List<Integer> elements = new ArrayList<>();
+
+        Flux.just(1, 2, 3, 4)
+                .subscribe(elements::add);
     }
 }

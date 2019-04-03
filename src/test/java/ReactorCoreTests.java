@@ -6,7 +6,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestCases {
+public class ReactorCoreTests {
 
     @Test
     public void listsCanSubscribeToFlux() {
@@ -16,5 +16,34 @@ public class TestCases {
                 .subscribe(elements::add);
 
         assertThat(elements).containsExactly(1, 2, 3, 4);
+    }
+
+    @Test
+    public void transformationsAreExecutedUponSubscription() {
+        List<Integer> elements = new ArrayList<>();
+
+        Flux.just(1, 2, 3, 4)
+                .map(i -> i * 2)
+                .subscribe(elements::add);
+
+        assertThat(elements).containsExactly(2, 4, 6, 8);
+    }
+
+    @Test
+    public void eachTransformationReturnsANewFlux() {
+        List<Integer> doubledElements = new ArrayList<>();
+        List<Integer> incrementedElements = new ArrayList<>();
+
+        var doubled = Flux.just(1, 2, 3, 4)
+                .map(i -> i * 2);
+
+        var incremented = doubled
+                .map(i -> i + 1);
+
+        doubled.subscribe(doubledElements::add);
+        incremented.subscribe(incrementedElements::add);
+
+        assertThat(doubledElements).containsExactly(2, 4, 6, 8);
+        assertThat(incrementedElements).containsExactly(3, 5, 7, 9);
     }
 }
