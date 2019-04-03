@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ReactorCoreTests {
 
     @Test
-    public void listsCanSubscribeToFlux() {
+    public void listsCanSubscribeToAStream() {
         List<Integer> elements = new ArrayList<>();
 
         Flux.just(1, 2, 3, 4)
@@ -30,7 +30,7 @@ public class ReactorCoreTests {
     }
 
     @Test
-    public void eachTransformationReturnsANewFlux() {
+    public void eachTransformationReturnsANewStream() {
         List<Integer> doubledElements = new ArrayList<>();
         List<Integer> incrementedElements = new ArrayList<>();
 
@@ -48,7 +48,7 @@ public class ReactorCoreTests {
     }
 
     @Test
-    public void twoFluxesCanBeCombined() {
+    public void twoStreamsCanBeCombined() {
         List<String> elements = new ArrayList<>();
 
         Flux.just(1, 2, 3, 4)
