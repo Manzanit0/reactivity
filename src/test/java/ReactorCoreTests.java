@@ -4,19 +4,51 @@ import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ReactorCoreTests {
 
     @Test
-    public void listsCanSubscribeToAStream() {
+    public void createsStreamFromIndividualObjects() {
         List<Integer> elements = new ArrayList<>();
 
         Flux.just(1, 2, 3, 4)
                 .subscribe(elements::add);
 
         assertThat(elements).containsExactly(1, 2, 3, 4);
+    }
+
+    @Test
+    public void createsStreamFromRange() {
+        List<Integer> elements = new ArrayList<>();
+
+        Flux.range(1, 5)
+                .subscribe(elements::add);
+
+        assertThat(elements).containsExactly(1, 2, 3, 4, 5);
+    }
+
+    @Test
+    public void createsStreamFromIterable() {
+        List<String> elements = new ArrayList<>();
+
+        Flux.fromIterable(List.of("red", "green", "blue"))
+                .subscribe(elements::add);
+
+        assertThat(elements).containsExactly("red", "green", "blue");
+    }
+
+    @Test
+    public void createsStreamFromStream() {
+        List<String> elements = new ArrayList<>();
+
+        Stream<String> s = Stream.of("rum", "gin");
+        Flux.fromStream(s).
+                subscribe(elements::add);
+
+        assertThat(elements).containsExactly("rum", "gin");
     }
 
     @Test
