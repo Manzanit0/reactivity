@@ -52,6 +52,22 @@ public class ReactorCoreTests {
     }
 
     @Test
+    public void streamsCanBeCreatedFromAnExceptionToo() {
+        var list = new ArrayList<>();
+
+        var exceptionThrown = false;
+        try {
+            Flux.error(new IllegalStateException())
+                    .subscribe(list::add);
+        }
+        catch (Exception ex) {
+            exceptionThrown = true;
+        }
+
+        assertThat(exceptionThrown).isEqualTo(true);
+    }
+
+    @Test
     public void transformationsAreExecutedUponSubscription() {
         List<Integer> elements = new ArrayList<>();
 
