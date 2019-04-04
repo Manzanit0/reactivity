@@ -68,6 +68,22 @@ public class ReactorCoreTests {
     }
 
     @Test
+    public void streamsAreLazy() {
+        long startTime = System.currentTimeMillis();
+
+        Flux.create(subscriber -> {
+            sleep(5000);
+            subscriber.next(1);
+        });
+
+        long endTime   = System.currentTimeMillis();
+        var elapsedTime = endTime - startTime;
+
+        // Assert that not even 1 second has passed.
+        assertThat(elapsedTime).isLessThan(1000);
+    }
+
+    @Test
     public void transformationsAreExecutedUponSubscription() {
         List<Integer> elements = new ArrayList<>();
 
@@ -128,5 +144,13 @@ public class ReactorCoreTests {
 
         // Once connected, it will stream infinitely.
         // publish.connect();
+    }
+
+    private void sleep(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
