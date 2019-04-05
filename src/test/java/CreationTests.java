@@ -1,4 +1,6 @@
 import org.junit.Test;
+import org.reactivestreams.Subscription;
+import reactor.core.publisher.BaseSubscriber;
 import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
@@ -134,11 +136,40 @@ public class CreationTests {
         assertThat(elements).containsExactly(1, 2, 3);
     }
 
+    @Test
+    public void subscribesABaseSubscriberToFlux() {
+        var subscriber = new SampleSubscriber<String>();
+
+        Flux.just("day", "night")
+                .subscribe(subscriber);
+
+        assertThat(subscriber.getValues()).containsExactly("day", "night");
+    }
+
     private void sleep(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+}
+
+
+class SampleSubscriber<T> extends BaseSubscriber<T> {
+
+    private List<T> values = new ArrayList<>();
+
+    public void hookOnSubscribe(Subscription subscription) {
+        request(1);
+    }
+
+    public void hookOnNext(T value) {
+        values.add(value);
+        request(1);
+    }
+
+    public List<T> getValues() {
+        return values;
     }
 }
