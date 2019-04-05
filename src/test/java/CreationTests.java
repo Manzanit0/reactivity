@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CreationTests {
 
     @Test
-    public void createsStreamFromIndividualObjects() {
+    public void createsFluxFromIndividualObjects() {
         List<Integer> elements = new ArrayList<>();
 
         Flux.just(1, 2, 3, 4)
@@ -20,7 +20,7 @@ public class CreationTests {
     }
 
     @Test
-    public void createsStreamFromRange() {
+    public void createsFluxFromRange() {
         List<Integer> elements = new ArrayList<>();
 
         Flux.range(1, 5)
@@ -30,7 +30,7 @@ public class CreationTests {
     }
 
     @Test
-    public void createsStreamFromIterable() {
+    public void createsFluxFromIterable() {
         List<String> elements = new ArrayList<>();
 
         Flux.fromIterable(List.of("red", "green", "blue"))
@@ -40,7 +40,7 @@ public class CreationTests {
     }
 
     @Test
-    public void createsStreamFromStream() {
+    public void createsFluxFromStream() {
         List<String> elements = new ArrayList<>();
 
         Stream<String> s = Stream.of("rum", "gin");
@@ -51,7 +51,7 @@ public class CreationTests {
     }
 
     @Test
-    public void streamsCanBeCreatedFromAnExceptionToo() {
+    public void fluxCanBeCreatedFromAnExceptionToo() {
         var list = new ArrayList<>();
 
         var exceptionThrown = false;
@@ -85,7 +85,7 @@ public class CreationTests {
     }
 
     @Test
-    public void streamsAreLazy() {
+    public void fluxAreLazy() {
         long startTime = System.currentTimeMillis();
 
         Flux.create(subscriber -> {
@@ -98,6 +98,20 @@ public class CreationTests {
 
         // Assert that not even 1 second has passed.
         assertThat(elapsedTime).isLessThan(1000);
+    }
+
+    @Test
+    public void addTwoSubscribersToFlux() {
+        List<Integer> first = new ArrayList<>();
+        List<Integer> second = new ArrayList<>();
+
+        var flux = Flux.range(1, 5);
+
+        flux.subscribe(first::add);
+        flux.subscribe(second::add);
+
+        assertThat(first).containsExactly(1, 2, 3, 4, 5);
+        assertThat(second).containsExactly(1, 2, 3, 4, 5);
     }
 
     private void sleep(int milliseconds) {
