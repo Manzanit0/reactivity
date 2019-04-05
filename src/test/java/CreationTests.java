@@ -67,6 +67,24 @@ public class CreationTests {
     }
 
     @Test
+    public void createSimpleFluxWithEvents() {
+        var elements = new ArrayList<String>();
+        var errors = new ArrayList<Throwable>();
+
+        Flux<String> flux = Flux.create(subscriber -> {
+            subscriber.next("Batman");
+            subscriber.next("Green Lantern");
+            throw new RuntimeException("Spiderman");
+        });
+
+        // Additionally, it can receive a third handler, for onComplete.
+        flux.subscribe(elements::add, errors::add);
+
+        assertThat(elements).containsExactly("Batman", "Green Lantern");
+        assertThat(errors.get(0).getMessage()).isEqualTo("Spiderman");
+    }
+
+    @Test
     public void streamsAreLazy() {
         long startTime = System.currentTimeMillis();
 
