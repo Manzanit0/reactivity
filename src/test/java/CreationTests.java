@@ -114,6 +114,26 @@ public class CreationTests {
         assertThat(second).containsExactly(1, 2, 3, 4, 5);
     }
 
+    @Test
+    public void fluxesCanBeCancelled() {
+        List<Integer> elements = new ArrayList<>();
+
+        Flux<Integer> flux = Flux.create(subscriber -> {
+            subscriber.next(1);
+            subscriber.next(2);
+            subscriber.next(3);
+
+            subscriber.next(4);
+            subscriber.next(5);
+            subscriber.next(6);
+        });
+
+        // Take triggers the complete event.
+        flux.take(3).subscribe(elements::add);
+
+        assertThat(elements).containsExactly(1, 2, 3);
+    }
+
     private void sleep(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
