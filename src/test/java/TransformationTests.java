@@ -7,9 +7,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class OperatorTests {
+public class TransformationTests {
 
-      @Test
+    @Test
     public void transformationsAreExecutedUponSubscription() {
         List<Integer> elements = new ArrayList<>();
 
