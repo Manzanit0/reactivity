@@ -3,6 +3,7 @@ import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,5 +71,50 @@ public class TransformationTests {
 
         // Once connected, it will stream infinitely.
         // publish.connect();
+    }
+
+    @Test
+    public void collectMap() {
+        var subscriber = new HashMap<Integer, Integer>();
+
+        Flux.just(1, 2, 3, 4)
+                .collectMap(k -> k * 2)
+                .subscribe(subscriber::putAll);
+
+        assertThat(subscriber).containsKeys(2, 4, 6, 8);
+        assertThat(subscriber).containsValues(1, 2, 3, 4);
+    }
+
+    @Test
+    public void collectList() {
+        var subscriber = new ArrayList<Integer>();
+
+        Flux.just(1, 2, 3, 4)
+                .collectList()
+                .subscribe(subscriber::addAll);
+
+        assertThat(subscriber).contains(1, 2, 3, 4);
+    }
+
+    @Test
+    public void reducer() {
+        final Integer[] sum = {0};
+
+        Flux.just(1, 2, 3, 4)
+                .reduce((accumulator, value) -> accumulator += value)
+                .subscribe( x -> sum[0] = x);
+
+        assertThat(sum[0]).isEqualTo(10);
+    }
+
+    @Test
+    public void distinct() {
+        var elements = new ArrayList<Integer>();
+
+        Flux.just(1, 2, 2, 2, 3)
+                .distinct()
+                .subscribe(elements::add);
+
+        assertThat(elements).containsExactly(1, 2, 3);
     }
 }
